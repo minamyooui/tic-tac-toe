@@ -1,5 +1,5 @@
 const gameboard = (() => {
-  const arr = [];
+  const arr = ['X', 'X', 'O', 'O', 'X', 'X', 'O', 'O', 'X'];
   const render = () => {
 
   };
