@@ -17,7 +17,8 @@ const gameboard = (() => {
     }
     render();
   };
-  return { update, newBoard, render }
+  const getArr = () => arr;
+  return { update, newBoard, render, getArr, arr }
 })();
 
 const Player = (name, marker) => {
@@ -34,18 +35,20 @@ const game = (() => {
   const playerTurn = (player) => {
     const marker = player.getMarker();
     const boxes = document.querySelectorAll('.block');
-    function placeMarker() {
-      this.textContent = marker;
-      boxes.forEach(e => {
-        e.removeEventListener('click', placeMarker);
-      });
-    }
     boxes.forEach(e => {
       if (e.textContent == ' ') {
         e.addEventListener('click', placeMarker);
       } 
     });
+    function placeMarker() {
+      gameboard.update(marker, this.id);
+      boxes.forEach(e => {
+        e.removeEventListener('click', placeMarker);
+      });
+    }
+    return player;
   };
+
   playerTurn(p1);
   const checkWin = () => {
     const checks = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
@@ -57,18 +60,21 @@ const game = (() => {
     return win
   }
   const checkRow = (a, b, c) => {
-    if (arr[a] == arr[b] && arr[b] == arr[c]) {
+    const arr = gameboard.getArr();
+    if (arr[a] == ' ' || arr[b] == ' ' || arr[c] == ' ') {
+      return false;
+    }else if (arr[a] == arr[b] && arr[b] == arr[c]) {
       return true;
     } else {
       return false;
     }
   }
-  // const play = (() => {
-  //   let keepGoing = true;
-  //   while(keepGoing) {
-  //     takeTurn(p1);
-  //     takeTurn(p2);
-  //   }
-  // })();
+  const play = (() => {
+    let keepGoing = true;
+    while(keepGoing) {
+      playerTurn(p1);
+      playerTurn(p2);
+    }
+  })();
 })();
 
