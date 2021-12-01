@@ -51,6 +51,12 @@ const game = (() => {
     return player;
   }
   const callPlay = function() {
+    if (checkWin()) {
+      const h1 = document.createElement('h1');
+      h1.textContent = `${player.getName()} wins!`;
+      const body = document.querySelector('body');
+      body.appendChild(h1);
+    }
     if (player == p1) {
       player = play(p2);
     } else {
@@ -78,6 +84,6 @@ const game = (() => {
     }
   }
   let player = play(p1);
-  return {callPlay}
+  return {checkWin}
 })();
 
