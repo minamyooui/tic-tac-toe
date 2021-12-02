@@ -32,8 +32,8 @@ const game = (() => {
   const p2 = Player('Player2', 'O');
   gameboard.newBoard();
   
-  const playerTurn = (player = p1) => {
-    const marker = player.getMarker();
+  const playerTurn = (() => {
+    let marker;
     const boxes = document.querySelectorAll('.block');
     boxes.forEach(e => {
       if (e.textContent == ' ') {
@@ -41,6 +41,9 @@ const game = (() => {
         e.addEventListener('click', callPlay)
       } 
     });
+    const setMarker = (player) => {
+      marker = player.getMarker();
+    }
     function placeMarker() {
       gameboard.update(marker, this.id);
       if (checkWin()) {
@@ -59,14 +62,15 @@ const game = (() => {
         e.removeEventListener('click', placeMarker);
       });
     }
-  };
+    return { setMarker }
+  })();
 
   
   const play = (player) => {
-    playerTurn(player);
+    playerTurn.setMarker(player);
     return player;
   }
-  const callPlay = function() {
+  function callPlay() {
     if (player == p1) {
       player = play(p2);
     } else {
