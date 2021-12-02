@@ -10,6 +10,26 @@
 </head>
 <body>
   <h1>Tic Tac Toe</h1>
+  <button id="new-game">New Game</button>
+  <div class="form hideform">
+    <form>
+      <p>Add Players</p>
+      <ul>
+        <li>
+          <label for="P1">Player 1:</label>
+          <input type="text" id="P1"/>
+        </li>
+        <li>
+          <label for="P2">Player 2:</label>
+          <input type="text" id="P2">
+        </li>
+        <li class="buttons">
+          <button type="button" id="submit">Submit</button>
+          <button type="button" id="close">Close</button>
+        </li>
+      </ul>
+    </form>
+  </div>
   <div class="gameboard">
     <div class="block" id="0"></div>
     <div class="block" id="1"></div>
@@ -20,6 +40,8 @@
     <div class="block" id="6"></div>
     <div class="block" id="7"></div>
     <div class="block" id="8"></div>
+  </div>
+  <div class="message">
   </div>
 </body>
 </html>

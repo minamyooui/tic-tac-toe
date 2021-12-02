@@ -28,11 +28,47 @@ const Player = (name, marker) => {
 };
 
 const game = (() => {
-  const p1 = Player('Player1', 'X');
-  const p2 = Player('Player2', 'O');
-  gameboard.newBoard();
-  
-  const playerTurn = (() => {
+  let p1, p2, player, pTurn;
+  const newGameButton = document.querySelector('#new-game');
+  newGameButton.addEventListener('click', showForm);
+  const submit = document.querySelector('#submit');
+  submit.addEventListener('click', setPlayers);
+  const close = document.querySelector('#close');
+  close.addEventListener('click', closeForm);
+  function setPlayers() {
+    let p1Name = document.querySelector('#P1').value;
+    let p2Name = document.querySelector('#P2').value;
+    p1 = Player(p1Name, 'X');
+    p2 = Player(p2Name, 'O');
+    document.querySelector('#P1').value = '';
+    document.querySelector('#P2').value = '';
+    closeForm();
+    startGame();
+  }
+  function startGame() {
+    pTurn = playerTurn();
+    player = play(p1);
+  }
+  function showForm() {
+    const form = document.querySelector('.form');
+    form.classList.toggle('hideform');
+    newGame();
+  }
+  function newGame() {
+    gameboard.newBoard();
+    const div = document.querySelector('.message');
+    if (div.firstChild) {
+      div.removeChild(div.firstChild);
+    }
+    if (pTurn) {
+      pTurn.removeAll();
+    }
+  }
+  function closeForm() {
+    const form = document.querySelector('.form');
+    form.classList.toggle('hideform');
+  }
+  const playerTurn = () => {
     let marker;
     const boxes = document.querySelectorAll('.block');
     boxes.forEach(e => {
@@ -44,30 +80,33 @@ const game = (() => {
     const setMarker = (player) => {
       marker = player.getMarker();
     }
+    const removeAll = () => {
+      for (let i = 0; i < 10; i++) {
+        boxes.forEach(e => {
+          e.removeEventListener('click', callPlay);
+          e.removeEventListener('click', placeMarker);
+        });
+      }
+    }
     function placeMarker() {
       gameboard.update(marker, this.id);
       if (checkWin()) {
-        const h1 = document.createElement('h1');
-        h1.textContent = `${player.getName()} wins!`;
-        const body = document.querySelector('body');
-        body.appendChild(h1);
+        const h2 = document.createElement('h2');
+        h2.textContent = `${player.getName()} wins!`;
+        const div = document.querySelector('.message');
+        div.appendChild(h2);
         removeAll();
       }
       this.removeEventListener('click', placeMarker);
     }
 
-    function removeAll() {
-      boxes.forEach(e => {
-        e.removeEventListener('click', callPlay);
-        e.removeEventListener('click', placeMarker);
-      });
-    }
-    return { setMarker }
-  })();
+    
+    return { setMarker, removeAll }
+  };
 
   
   const play = (player) => {
-    playerTurn.setMarker(player);
+    pTurn.setMarker(player);
     return player;
   }
   function callPlay() {
@@ -97,7 +136,6 @@ const game = (() => {
       return false;
     }
   }
-  let player = play(p1);
   return {checkWin}
 })();
 
