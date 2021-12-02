@@ -14,8 +14,14 @@ h2 {
   margin: 0 auto;
   font-size: 36px;
   margin-top: 70px;
+  text-align: center;
 }
 
+#new-game {
+  width: auto;
+  margin: 0 auto;
+  margin-top: 10px;
+}
 .gameboard {
   height: 300px;
   width: 300px;
