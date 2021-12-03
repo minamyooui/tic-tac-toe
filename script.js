@@ -53,6 +53,7 @@ const game = (() => {
     p1 = Player('Player', 'X');
     pTurn = playerTurn();
     player = play(p1);
+    closeForm();
   }
   const getPlayer = () => player;
   function setPlayers() {
@@ -84,6 +85,7 @@ const game = (() => {
     if (pTurn) {
       pTurn.removeAll();
     }
+    compPlay = false;
   }
   function closeForm() {
     const form = document.querySelector('.form');
