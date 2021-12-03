@@ -18,7 +18,7 @@ const gameboard = (() => {
     render();
   };
   const getArr = () => arr;
-  return { update, newBoard, render, getArr, arr }
+  return { update, newBoard, render, getArr }
 })();
 
 const Player = (name, marker) => {
@@ -26,6 +26,14 @@ const Player = (name, marker) => {
   const getMarker = () => marker;
   return { getName, getMarker }
 };
+
+// const computer = (() => {
+//   const play = () => {
+//     let i = gameboard.getArr().findIndex(e => e == ' ');
+//     gameboard.update('O', i);
+//   }
+//   return { play }
+// })();
 
 const game = (() => {
   let p1, p2, player, pTurn;
@@ -35,6 +43,8 @@ const game = (() => {
   submit.addEventListener('click', setPlayers);
   const close = document.querySelector('#close');
   close.addEventListener('click', closeForm);
+  // const playComputer = document.querySelector('#computer');
+  // playComputer.addEventListener('click',  )
   function setPlayers() {
     let p1Name = document.querySelector('#P1').value;
     let p2Name = document.querySelector('#P2').value;
@@ -91,20 +101,31 @@ const game = (() => {
     function placeMarker() {
       gameboard.update(marker, this.id);
       if (checkWin()) {
-        const h2 = document.createElement('h2');
-        h2.textContent = `${player.getName()} wins!`;
-        const div = document.querySelector('.message');
-        div.appendChild(h2);
+        endMsg(`${player.getName()} wins!`);
+        removeAll();
+      }
+      if (checkEnd()) {
+        endMsg('Draw!');
         removeAll();
       }
       this.removeEventListener('click', placeMarker);
     }
-
     
     return { setMarker, removeAll }
   };
-
-  
+  function checkEnd() {
+    if (gameboard.getArr().includes(' ')) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  function endMsg(msg) {
+      const h2 = document.createElement('h2');
+      h2.textContent = msg;
+      const div = document.querySelector('.message');
+      div.appendChild(h2);
+    }
   const play = (player) => {
     pTurn.setMarker(player);
     return player;
