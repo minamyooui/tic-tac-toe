@@ -32,7 +32,15 @@ const computer = (() => {
   const play = () => {
     let i = gameboard.getArr().findIndex(e => e == ' ');
     gameboard.update('O', i);
-    console.log('comp');
+    if (game.checkWin()) {
+      game.endMsg(`Computer wins!`);
+      game.playerTurn().removeAll();
+      return;
+    }
+    if (game.checkEnd()) {
+      game.endMsg('Draw!');
+      game.playerTurn().removeAll();
+    }
     return 'computer';
   }
   return { play }
@@ -104,6 +112,7 @@ const game = (() => {
       marker = player.getMarker();
     }
     const removeAll = () => {
+      console.log('removing');
       for (let i = 0; i < 10; i++) {
         boxes.forEach(e => {
           e.removeEventListener('click', callPlay);
@@ -114,9 +123,9 @@ const game = (() => {
     function placeMarker() {
       gameboard.update(marker, this.id);
       if (checkWin()) {
-        console.log(player);
         endMsg(`${player.getName()} wins!`);
         removeAll();
+        return;
       }
       if (checkEnd()) {
         endMsg('Draw!');
@@ -127,19 +136,19 @@ const game = (() => {
     
     return { setMarker, removeAll }
   };
-  function checkEnd() {
+  const checkEnd = () => {
     if (gameboard.getArr().includes(' ')) {
       return false;
     } else {
       return true;
     }
   }
-  function endMsg(msg) {
-      const h2 = document.createElement('h2');
-      h2.textContent = msg;
-      const div = document.querySelector('.message');
-      div.appendChild(h2);
-    }
+  const endMsg = (msg) => {
+    const h2 = document.createElement('h2');
+    h2.textContent = msg;
+    const div = document.querySelector('.message');
+    div.appendChild(h2);
+  }
   const play = (player) => {
     pTurn.setMarker(player);
     return player;
@@ -175,6 +184,6 @@ const game = (() => {
       return false;
     }
   }
-  return {checkWin, getPlayer}
+  return {checkWin, getPlayer, checkEnd, endMsg, playerTurn}
 })();
 
