@@ -24,27 +24,37 @@ const gameboard = (() => {
 const Player = (name, marker) => {
   const getName = () => name;
   const getMarker = () => marker;
+
   return { getName, getMarker }
 };
 
-// const computer = (() => {
-//   const play = () => {
-//     let i = gameboard.getArr().findIndex(e => e == ' ');
-//     gameboard.update('O', i);
-//   }
-//   return { play }
-// })();
+const computer = (() => {
+  const play = () => {
+    let i = gameboard.getArr().findIndex(e => e == ' ');
+    gameboard.update('O', i);
+    console.log('comp');
+    return 'computer';
+  }
+  return { play }
+})();
 
 const game = (() => {
-  let p1, p2, player, pTurn;
+  let p1, p2, player, pTurn, compPlay = false;
   const newGameButton = document.querySelector('#new-game');
   newGameButton.addEventListener('click', showForm);
   const submit = document.querySelector('#submit');
   submit.addEventListener('click', setPlayers);
   const close = document.querySelector('#close');
   close.addEventListener('click', closeForm);
-  // const playComputer = document.querySelector('#computer');
-  // playComputer.addEventListener('click',  )
+  const playComputer = document.querySelector('#playComp');
+  playComputer.addEventListener('click',  startComputerGame);
+  function startComputerGame() {
+    compPlay = true;
+    p1 = Player('Player', 'X');
+    pTurn = playerTurn();
+    player = play(p1);
+  }
+  const getPlayer = () => player;
   function setPlayers() {
     let p1Name = document.querySelector('#P1').value;
     let p2Name = document.querySelector('#P2').value;
@@ -59,6 +69,7 @@ const game = (() => {
     pTurn = playerTurn();
     player = play(p1);
   }
+  
   function showForm() {
     const form = document.querySelector('.form');
     form.classList.toggle('hideform');
@@ -101,6 +112,7 @@ const game = (() => {
     function placeMarker() {
       gameboard.update(marker, this.id);
       if (checkWin()) {
+        console.log(player);
         endMsg(`${player.getName()} wins!`);
         removeAll();
       }
@@ -131,10 +143,14 @@ const game = (() => {
     return player;
   }
   function callPlay() {
-    if (player == p1) {
-      player = play(p2);
+    if (compPlay) {
+      computer.play();
     } else {
-      player = play(p1);
+      if (player == p1) {
+        player = play(p2);
+      } else {
+        player = play(p1);
+      }
     }
     this.removeEventListener('click', callPlay);
   }
@@ -157,6 +173,6 @@ const game = (() => {
       return false;
     }
   }
-  return {checkWin}
+  return {checkWin, getPlayer}
 })();
 
