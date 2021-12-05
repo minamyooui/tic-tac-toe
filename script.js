@@ -32,6 +32,7 @@ const computer = (() => {
   const play = () => {
     let i = gameboard.getArr().findIndex(e => e == ' ');
     gameboard.update('O', i);
+    game.playerTurn.removeFrom(i);
     if (game.checkWin()) {
       game.endMsg(`Computer wins!`);
       game.playerTurn.removeAll();
@@ -71,6 +72,11 @@ const game = (() => {
     const setMarker = (player) => {
       marker = player.getMarker();
     }
+    const removeFrom = (id) => {
+      const box = document.getElementById(`${id}`);
+      box.removeEventListener('click', placeMarker);
+      box.removeEventListener('click', callPlay);
+    }
     const removeAll = () => {
       console.log('removing');
       for (let i = 0; i < 10; i++) {
@@ -94,7 +100,7 @@ const game = (() => {
       this.removeEventListener('click', placeMarker);
     }
     
-    return { setMarker, removeAll, setListeners }
+    return { setMarker, removeAll, setListeners, removeFrom }
   })();
 
   function startComputerGame() {
