@@ -34,12 +34,12 @@ const computer = (() => {
     gameboard.update('O', i);
     if (game.checkWin()) {
       game.endMsg(`Computer wins!`);
-      game.playerTurn().removeAll();
+      game.playerTurn.removeAll();
       return;
     }
     if (game.checkEnd()) {
       game.endMsg('Draw!');
-      game.playerTurn().removeAll();
+      game.playerTurn.removeAll();
     }
     return 'computer';
   }
@@ -47,7 +47,7 @@ const computer = (() => {
 })();
 
 const game = (() => {
-  let p1, p2, player, pTurn, compPlay = false;
+  let p1, p2, player, compPlay = false;
   const newGameButton = document.querySelector('#new-game');
   newGameButton.addEventListener('click', showForm);
   const submit = document.querySelector('#submit');
@@ -56,58 +56,18 @@ const game = (() => {
   close.addEventListener('click', closeForm);
   const playComputer = document.querySelector('#playComp');
   playComputer.addEventListener('click',  startComputerGame);
-  function startComputerGame() {
-    compPlay = true;
-    p1 = Player('Player', 'X');
-    pTurn = playerTurn();
-    player = play(p1);
-    closeForm();
-  }
-  const getPlayer = () => player;
-  function setPlayers() {
-    let p1Name = document.querySelector('#P1').value;
-    let p2Name = document.querySelector('#P2').value;
-    p1 = Player(p1Name, 'X');
-    p2 = Player(p2Name, 'O');
-    document.querySelector('#P1').value = '';
-    document.querySelector('#P2').value = '';
-    closeForm();
-    startGame();
-  }
-  function startGame() {
-    pTurn = playerTurn();
-    player = play(p1);
-  }
-  
-  function showForm() {
-    const form = document.querySelector('.form');
-    form.classList.toggle('hideform');
-    newGame();
-  }
-  function newGame() {
-    gameboard.newBoard();
-    const div = document.querySelector('.message');
-    if (div.firstChild) {
-      div.removeChild(div.firstChild);
-    }
-    if (pTurn) {
-      pTurn.removeAll();
-    }
-    compPlay = false;
-  }
-  function closeForm() {
-    const form = document.querySelector('.form');
-    form.classList.toggle('hideform');
-  }
-  const playerTurn = () => {
+  const playerTurn = (() => {
     let marker;
     const boxes = document.querySelectorAll('.block');
-    boxes.forEach(e => {
-      if (e.textContent == ' ') {
-        e.addEventListener('click', placeMarker);
-        e.addEventListener('click', callPlay)
-      } 
-    });
+    const setListeners = () => { 
+      boxes.forEach(e => {
+        if (e.textContent == ' ') {
+          e.addEventListener('click', placeMarker);
+          e.addEventListener('click', callPlay)
+        } 
+      });
+    }
+    
     const setMarker = (player) => {
       marker = player.getMarker();
     }
@@ -134,8 +94,50 @@ const game = (() => {
       this.removeEventListener('click', placeMarker);
     }
     
-    return { setMarker, removeAll }
-  };
+    return { setMarker, removeAll, setListeners }
+  })();
+
+  function startComputerGame() {
+    compPlay = true;
+    p1 = Player('Player', 'X');
+    playerTurn.setListeners();
+    player = play(p1);
+    closeForm();
+  }
+  const getPlayer = () => player;
+  function setPlayers() {
+    let p1Name = document.querySelector('#P1').value;
+    let p2Name = document.querySelector('#P2').value;
+    p1 = Player(p1Name, 'X');
+    p2 = Player(p2Name, 'O');
+    document.querySelector('#P1').value = '';
+    document.querySelector('#P2').value = '';
+    closeForm();
+    startGame();
+  }
+  function startGame() {
+    playerTurn.setListeners();
+    player = play(p1);
+  }
+  
+  function showForm() {
+    const form = document.querySelector('.form');
+    form.classList.toggle('hideform');
+    newGame();
+  }
+  function newGame() {
+    gameboard.newBoard();
+    const div = document.querySelector('.message');
+    if (div.firstChild) {
+      div.removeChild(div.firstChild);
+    }
+    playerTurn.removeAll();
+    compPlay = false;
+  }
+  function closeForm() {
+    const form = document.querySelector('.form');
+    form.classList.toggle('hideform');
+  }
   const checkEnd = () => {
     if (gameboard.getArr().includes(' ')) {
       return false;
@@ -150,7 +152,7 @@ const game = (() => {
     div.appendChild(h2);
   }
   const play = (player) => {
-    pTurn.setMarker(player);
+    playerTurn.setMarker(player);
     return player;
   }
   function callPlay() {
@@ -184,6 +186,6 @@ const game = (() => {
       return false;
     }
   }
-  return {checkWin, getPlayer, checkEnd, endMsg, playerTurn}
+  return {checkWin, getPlayer, checkEnd, endMsg, playerTurn }
 })();
 
